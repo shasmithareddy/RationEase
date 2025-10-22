@@ -53,7 +53,7 @@ const Dashboard = () => {
     try {
       // Get shop associated with user
       const { data: shopUser, error: shopUserError } = await supabase
-        .from("shop_users")
+        .from("shop_users" as any)
         .select("shop_id")
         .eq("user_id", userId)
         .single();
@@ -70,15 +70,15 @@ const Dashboard = () => {
 
       // Get shop details
       const { data: shopData, error: shopError } = await supabase
-        .from("shops")
+        .from("shops" as any)
         .select("*")
-        .eq("id", shopUser.shop_id)
+        .eq("id", (shopUser as any).shop_id)
         .single();
 
       if (shopError) throw shopError;
       
       setShop(shopData);
-      await loadTokens(shopUser.shop_id);
+      await loadTokens((shopUser as any).shop_id);
     } catch (error: any) {
       toast({
         title: "பிழை / Error",
@@ -92,7 +92,7 @@ const Dashboard = () => {
 
   const loadTokens = async (shopId: string) => {
     const { data, error } = await supabase
-      .from("tokens")
+      .from("tokens" as any)
       .select("*")
       .eq("shop_id", shopId)
       .order("token_number", { ascending: true });
@@ -141,11 +141,11 @@ const Dashboard = () => {
     try {
       // Update token status to completed
       const { error: updateError } = await supabase
-        .from("tokens")
+        .from("tokens" as any)
         .update({ 
           status: "completed",
           completed_at: new Date().toISOString()
-        })
+        } as any)
         .eq("id", tokenId);
 
       if (updateError) throw updateError;

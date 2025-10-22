@@ -1,1 +1,4 @@
 project_id = "tlbyforojcizctnanpdr"
+
+[functions.send-sms-notifications]
+verify_jwt = true
