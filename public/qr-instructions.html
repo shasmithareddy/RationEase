@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample QR Code - RationQueue</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            color: #1e293b;
+        }
+        h1 {
+            color: #2563eb;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #f97316;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+        .qr-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        .qr-container img {
+            max-width: 400px;
+            width: 100%;
+            border: 4px solid #2563eb;
+            border-radius: 8px;
+        }
+        .instructions {
+            background: #e0f2fe;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #2563eb;
+        }
+        .instructions h3 {
+            margin-top: 0;
+            color: #2563eb;
+        }
+        .warning {
+            background: #fef3c7;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #f59e0b;
+        }
+        code {
+            background: #1e293b;
+            color: #22d3ee;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .link {
+            word-break: break-all;
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎫 RationQueue Sample QR Code</h1>
+        <h2>நியாய விலை கடை மாதிரி QR குறியீடு</h2>
+
+        <div class="qr-container">
+            <img src="./sample-qr-code.png" alt="Sample QR Code">
+            <p><strong>வரிசையில் சேர ஸ்கேன் செய்யவும் / Scan to Join Queue</strong></p>
+        </div>
+
+        <div class="instructions">
+            <h3>📱 How to Use / எவ்வாறு பயன்படுத்துவது</h3>
+            <ol>
+                <li><strong>For Real QR:</strong> The actual QR code should point to:<br>
+                    <div class="link">https://your-app-domain.com/join/SHOP-001-ANNA-NAGAR</div>
+                </li>
+                <li><strong>Shop QR Code:</strong> Each shop has a unique QR code value (e.g., <code>SHOP-001-ANNA-NAGAR</code>)</li>
+                <li><strong>Customers scan</strong> the QR code with their phone camera</li>
+                <li>They fill in their <strong>name and phone number</strong></li>
+                <li>System automatically assigns a <strong>token number</strong></li>
+                <li>Dashboard updates in <strong>real-time</strong></li>
+                <li>Customer receives <strong>SMS notification</strong> when their turn approaches</li>
+            </ol>
+        </div>
+
+        <div class="warning">
+            <h3>⚠️ Important Setup Steps</h3>
+            <ol>
+                <li><strong>Create a shop</strong> in the Cloud database with QR code: <code>SHOP-001-ANNA-NAGAR</code></li>
+                <li><strong>Generate real QR codes</strong> using online tools like qr-code-generator.com pointing to:<br>
+                    <code>https://your-deployed-url.com/join/SHOP-001-ANNA-NAGAR</code>
+                </li>
+                <li><strong>Print and display</strong> QR codes at your ration shops</li>
+                <li><strong>Test the flow</strong>:
+                    <ul>
+                        <li>Navigate to <code>/join/SHOP-001-ANNA-NAGAR</code></li>
+                        <li>Enter name and phone</li>
+                        <li>Check dashboard for real-time updates</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div class="instructions">
+            <h3>🔗 Test URLs</h3>
+            <p><strong>Local Testing:</strong></p>
+            <div class="link">http://localhost:8080/join/SHOP-001-ANNA-NAGAR</div>
+            
+            <p><strong>Production (after deployment):</strong></p>
+            <div class="link">https://your-app.lovable.app/join/SHOP-001-ANNA-NAGAR</div>
+        </div>
+
+        <div class="instructions">
+            <h3>💡 Pro Tips</h3>
+            <ul>
+                <li>Each ration shop should have a <strong>unique QR code value</strong></li>
+                <li>Make QR codes large enough to scan from 1-2 feet away</li>
+                <li>Laminate printed QR codes for durability</li>
+                <li>Display QR codes at shop entrance and near distribution counter</li>
+                <li>Test SMS notifications with your Twilio number first</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
