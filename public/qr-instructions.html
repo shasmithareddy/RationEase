@@ -3,143 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sample QR Code - RationQueue</title>
+    <title>How to Use RationQueue QR Code</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             max-width: 800px;
             margin: 50px auto;
             padding: 20px;
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
         .container {
-            background: white;
-            border-radius: 12px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            color: #1e293b;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
         }
         h1 {
-            color: #2563eb;
             text-align: center;
-            margin-bottom: 10px;
-        }
-        h2 {
-            color: #f97316;
-            text-align: center;
-            margin-top: 0;
             margin-bottom: 30px;
         }
-        .qr-container {
-            text-align: center;
-            margin: 30px 0;
+        .step {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
             padding: 20px;
-            background: #f8fafc;
-            border-radius: 8px;
+            margin-bottom: 20px;
         }
-        .qr-container img {
-            max-width: 400px;
-            width: 100%;
-            border: 4px solid #2563eb;
-            border-radius: 8px;
-        }
-        .instructions {
-            background: #e0f2fe;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid #2563eb;
-        }
-        .instructions h3 {
+        .step h2 {
             margin-top: 0;
-            color: #2563eb;
-        }
-        .warning {
-            background: #fef3c7;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            border-left: 4px solid #f59e0b;
+            color: #ffd700;
         }
         code {
-            background: #1e293b;
-            color: #22d3ee;
+            background: rgba(0, 0, 0, 0.3);
             padding: 2px 6px;
-            border-radius: 4px;
+            border-radius: 3px;
             font-family: monospace;
         }
+        .important {
+            background: rgba(255, 0, 0, 0.2);
+            border-left: 4px solid #ff6b6b;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
         .link {
-            word-break: break-all;
-            background: #f1f5f9;
-            padding: 10px;
-            border-radius: 4px;
-            margin: 10px 0;
-            font-family: monospace;
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎫 RationQueue Sample QR Code</h1>
-        <h2>நியாய விலை கடை மாதிரி QR குறியீடு</h2>
-
-        <div class="qr-container">
-            <img src="./sample-qr-code.png" alt="Sample QR Code">
-            <p><strong>வரிசையில் சேர ஸ்கேன் செய்யவும் / Scan to Join Queue</strong></p>
+        <h1>🎫 RationQueue - QR Code Instructions</h1>
+        
+        <div class="important">
+            <strong>⚠️ IMPORTANT:</strong> DO NOT use the static QR image in the public folder. Instead, use the dynamic QR code shown in your Dashboard!
         </div>
 
-        <div class="instructions">
-            <h3>📱 How to Use / எவ்வாறு பயன்படுத்துவது</h3>
+        <div class="step">
+            <h2>📱 Step 1: Access Your Dashboard</h2>
+            <p>1. Login to your account at <code>/auth</code></p>
+            <p>2. Navigate to <code>/dashboard</code></p>
+            <p>3. You'll see a QR code displayed on the right sidebar</p>
+        </div>
+
+        <div class="step">
+            <h2>🔗 Step 2: Get the QR Code URL</h2>
+            <p>The QR code in your dashboard encodes this URL format:</p>
+            <code>https://[your-domain]/join/SHOP001</code>
+            <p><br>For local testing, it will be:</p>
+            <code>http://localhost:8080/join/SHOP001</code>
+        </div>
+
+        <div class="step">
+            <h2>📸 Step 3: Test the Flow</h2>
+            <p><strong>Option A:</strong> Direct URL (Easiest for testing)</p>
             <ol>
-                <li><strong>For Real QR:</strong> The actual QR code should point to:<br>
-                    <div class="link">https://your-app-domain.com/join/SHOP-001-ANNA-NAGAR</div>
-                </li>
-                <li><strong>Shop QR Code:</strong> Each shop has a unique QR code value (e.g., <code>SHOP-001-ANNA-NAGAR</code>)</li>
-                <li><strong>Customers scan</strong> the QR code with their phone camera</li>
-                <li>They fill in their <strong>name and phone number</strong></li>
-                <li>System automatically assigns a <strong>token number</strong></li>
-                <li>Dashboard updates in <strong>real-time</strong></li>
-                <li>Customer receives <strong>SMS notification</strong> when their turn approaches</li>
+                <li>On your phone, open: <code>http://localhost:8080/join/SHOP001</code></li>
+                <li>Or after deployment: <code>https://[your-app].lovable.app/join/SHOP001</code></li>
             </ol>
-        </div>
-
-        <div class="warning">
-            <h3>⚠️ Important Setup Steps</h3>
-            <ol>
-                <li><strong>Create a shop</strong> in the Cloud database with QR code: <code>SHOP-001-ANNA-NAGAR</code></li>
-                <li><strong>Generate real QR codes</strong> using online tools like qr-code-generator.com pointing to:<br>
-                    <code>https://your-deployed-url.com/join/SHOP-001-ANNA-NAGAR</code>
-                </li>
-                <li><strong>Print and display</strong> QR codes at your ration shops</li>
-                <li><strong>Test the flow</strong>:
-                    <ul>
-                        <li>Navigate to <code>/join/SHOP-001-ANNA-NAGAR</code></li>
-                        <li>Enter name and phone</li>
-                        <li>Check dashboard for real-time updates</li>
-                    </ul>
-                </li>
-            </ol>
-        </div>
-
-        <div class="instructions">
-            <h3>🔗 Test URLs</h3>
-            <p><strong>Local Testing:</strong></p>
-            <div class="link">http://localhost:8080/join/SHOP-001-ANNA-NAGAR</div>
             
-            <p><strong>Production (after deployment):</strong></p>
-            <div class="link">https://your-app.lovable.app/join/SHOP-001-ANNA-NAGAR</div>
+            <p><strong>Option B:</strong> Scan QR Code</p>
+            <ol>
+                <li>Take a screenshot of the QR code from your dashboard</li>
+                <li>Scan it with your phone's camera app</li>
+                <li>Or use any QR scanner app</li>
+            </ol>
         </div>
 
-        <div class="instructions">
-            <h3>💡 Pro Tips</h3>
-            <ul>
-                <li>Each ration shop should have a <strong>unique QR code value</strong></li>
-                <li>Make QR codes large enough to scan from 1-2 feet away</li>
-                <li>Laminate printed QR codes for durability</li>
-                <li>Display QR codes at shop entrance and near distribution counter</li>
-                <li>Test SMS notifications with your Twilio number first</li>
-            </ul>
+        <div class="step">
+            <h2>✅ Step 4: Join the Queue</h2>
+            <ol>
+                <li>Enter your name (e.g., "Ravi Kumar")</li>
+                <li>Enter your mobile number with country code (e.g., "+91 8668012212")</li>
+                <li>Click "வரிசையில் சேரவும் / Join Queue"</li>
+                <li>You'll receive a token number!</li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h2>🔔 Step 5: Test SMS Notifications</h2>
+            <p>1. Go back to your dashboard</p>
+            <p>2. You'll see the new token in the queue</p>
+            <p>3. Click the checkmark ✓ to complete Token #1</p>
+            <p>4. This will trigger SMS notifications to the next 3-4 people in queue</p>
+            <p><strong>Note:</strong> Make sure Twilio credentials are configured in your secrets!</p>
+        </div>
+
+        <div class="step">
+            <h2>🚀 For Production Use</h2>
+            <ol>
+                <li>Deploy your app using the Publish button</li>
+                <li>Your QR code will automatically use the production URL</li>
+                <li>Print the QR code from the dashboard</li>
+                <li>Display it in your shop for customers to scan</li>
+            </ol>
+        </div>
+
+        <div class="important">
+            <strong>📞 Contact Test:</strong><br>
+            Token #1 is assigned to +91 8668012212<br>
+            Complete any token on the dashboard to trigger notifications!
         </div>
     </div>
 </body>

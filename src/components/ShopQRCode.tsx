@@ -8,6 +8,9 @@ interface ShopQRCodeProps {
 }
 
 const ShopQRCode = ({ qrCode, shopName }: ShopQRCodeProps) => {
+  // Generate full URL for QR code
+  const qrUrl = `${window.location.origin}/join/${qrCode}`;
+  
   return (
     <Card className="border border-border shadow-sm">
       <CardHeader>
@@ -19,7 +22,7 @@ const ShopQRCode = ({ qrCode, shopName }: ShopQRCodeProps) => {
       <CardContent className="flex flex-col items-center space-y-4">
         <div className="bg-white p-4 rounded-lg border-2 border-primary/20">
           <QRCodeSVG
-            value={qrCode}
+            value={qrUrl}
             size={200}
             level="H"
             includeMargin={true}
@@ -29,6 +32,9 @@ const ShopQRCode = ({ qrCode, shopName }: ShopQRCodeProps) => {
           வாடிக்கையாளர்கள் ஸ்கேன் செய்ய
           <br />
           For customers to scan and join queue
+        </p>
+        <p className="text-xs text-muted-foreground font-mono bg-muted px-2 py-1 rounded">
+          {qrUrl}
         </p>
       </CardContent>
     </Card>
