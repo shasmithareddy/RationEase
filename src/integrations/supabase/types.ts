@@ -14,13 +14,121 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      shop_users: {
+        Row: {
+          created_at: string
+          id: string
+          shop_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          shop_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          shop_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shop_users_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shops: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          location: string
+          location_tamil: string
+          name: string
+          name_tamil: string
+          qr_code: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          location: string
+          location_tamil: string
+          name: string
+          name_tamil: string
+          qr_code: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          location?: string
+          location_tamil?: string
+          name?: string
+          name_tamil?: string
+          qr_code?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      tokens: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          customer_name: string
+          customer_phone: string
+          id: string
+          shop_id: string
+          status: string
+          token_number: number
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          customer_name: string
+          customer_phone: string
+          id?: string
+          shop_id: string
+          status?: string
+          token_number: number
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          customer_name?: string
+          customer_phone?: string
+          id?: string
+          shop_id?: string
+          status?: string
+          token_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tokens_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_next_token_number: { Args: { p_shop_id: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never
