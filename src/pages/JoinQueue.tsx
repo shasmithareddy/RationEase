@@ -25,8 +25,8 @@ const JoinQueue = () => {
 
   const loadShop = async () => {
     try {
-      const { data, error } = await supabase
-        .from("shops" as any)
+      const { data, error } = await (supabase as any)
+        .from("shops")
         .select("*")
         .eq("qr_code", qrCode)
         .eq("is_active", true)
@@ -56,16 +56,16 @@ const JoinQueue = () => {
 
     try {
       // Get next token number
-      const { data: functionData, error: functionError } = await supabase
-        .rpc("get_next_token_number" as any, { p_shop_id: shop.id });
+      const { data: functionData, error: functionError } = await (supabase as any)
+        .rpc("get_next_token_number", { p_shop_id: shop.id });
 
       if (functionError) throw functionError;
 
       const nextTokenNumber = functionData;
 
       // Insert new token
-      const { data: newToken, error: insertError } = await supabase
-        .from("tokens" as any)
+      const { data: newToken, error: insertError } = await (supabase as any)
+        .from("tokens")
         .insert({
           shop_id: shop.id,
           token_number: nextTokenNumber,
@@ -79,8 +79,8 @@ const JoinQueue = () => {
       if (insertError) throw insertError;
 
       // Get current queue position
-      const { data: waitingTokens, error: queueError } = await supabase
-        .from("tokens" as any)
+      const { data: waitingTokens, error: queueError } = await (supabase as any)
+        .from("tokens")
         .select("id")
         .eq("shop_id", shop.id)
         .eq("status", "waiting")
@@ -88,7 +88,7 @@ const JoinQueue = () => {
 
       if (queueError) throw queueError;
 
-      const position = waitingTokens?.findIndex((t: any) => t.id === newToken.id) + 1;
+      const position = waitingTokens?.findIndex((t: any) => t.id === newToken?.id) + 1;
 
       setTokenNumber(nextTokenNumber);
       setQueuePosition(position || 1);

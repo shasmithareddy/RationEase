@@ -52,8 +52,8 @@ const Dashboard = () => {
   const loadShopData = async (userId: string) => {
     try {
       // Get shop associated with user
-      const { data: shopUser, error: shopUserError } = await supabase
-        .from("shop_users" as any)
+      const { data: shopUser, error: shopUserError } = await (supabase as any)
+        .from("shop_users")
         .select("shop_id")
         .eq("user_id", userId)
         .single();
@@ -69,8 +69,8 @@ const Dashboard = () => {
       }
 
       // Get shop details
-      const { data: shopData, error: shopError } = await supabase
-        .from("shops" as any)
+      const { data: shopData, error: shopError } = await (supabase as any)
+        .from("shops")
         .select("*")
         .eq("id", (shopUser as any).shop_id)
         .single();
@@ -91,8 +91,8 @@ const Dashboard = () => {
   };
 
   const loadTokens = async (shopId: string) => {
-    const { data, error } = await supabase
-      .from("tokens" as any)
+    const { data, error } = await (supabase as any)
+      .from("tokens")
       .select("*")
       .eq("shop_id", shopId)
       .order("token_number", { ascending: true });
@@ -140,12 +140,12 @@ const Dashboard = () => {
   const handleApproveToken = async (tokenId: string) => {
     try {
       // Update token status to completed
-      const { error: updateError } = await supabase
-        .from("tokens" as any)
+      const { error: updateError } = await (supabase as any)
+        .from("tokens")
         .update({ 
           status: "completed",
           completed_at: new Date().toISOString()
-        } as any)
+        })
         .eq("id", tokenId);
 
       if (updateError) throw updateError;
