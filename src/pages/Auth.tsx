@@ -9,10 +9,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 
 const Auth = () => {
-  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isShopOwner, setIsShopOwner] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -21,20 +23,57 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      // Use email format from phone for auth (phone@rationqueue.app)
+      const email = `${phone.replace(/\+/g, '')}@rationqueue.app`;
+      
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/dashboard`,
+            data: {
+              phone,
+              full_name: fullName,
+              role: isShopOwner ? 'shop_owner' : 'customer',
+            },
           },
         });
 
         if (error) throw error;
 
+        // Create profile
+        if (data.user) {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: data.user.id,
+              phone,
+              full_name: fullName,
+              role: isShopOwner ? 'shop_owner' : 'customer',
+            });
+
+          if (profileError) throw profileError;
+
+          // If shop owner, link to sample shop
+          if (isShopOwner) {
+            const { data: shopData } = await supabase
+              .from('shops')
+              .select('id')
+              .eq('qr_code', 'SHOP001')
+              .single();
+
+            if (shopData) {
+              await supabase.from('shop_users').insert({
+                user_id: data.user.id,
+                shop_id: shopData.id,
+              });
+            }
+          }
+        }
+
         toast({
           title: "வெற்றி / Success",
-          description: "கணக்கு உருவாக்கப்பட்டது! / Account created successfully!",
+          description: "கணக்கு உருவாக்கப்பட்டது! / Account created!",
         });
         navigate("/dashboard");
       } else {
@@ -78,17 +117,46 @@ const Auth = () => {
         <form onSubmit={handleAuth}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">மின்னஞ்சல் / Email</Label>
+              <Label htmlFor="phone">மொபைல் எண் / Mobile Number</Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="email@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="phone"
+                type="tel"
+                placeholder="+91 9876543210"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
                 required
                 disabled={loading}
               />
             </div>
+            {isSignUp && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">பெயர் / Full Name</Label>
+                  <Input
+                    id="fullName"
+                    type="text"
+                    placeholder="உங்கள் பெயர் / Your name"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required
+                    disabled={loading}
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="shopOwner"
+                    checked={isShopOwner}
+                    onChange={(e) => setIsShopOwner(e.target.checked)}
+                    className="rounded border-gray-300"
+                    disabled={loading}
+                  />
+                  <Label htmlFor="shopOwner" className="text-sm cursor-pointer">
+                    கடை உரிமையாளர் / Shop Owner
+                  </Label>
+                </div>
+              </>
+            )}
             <div className="space-y-2">
               <Label htmlFor="password">கடவுச்சொல் / Password</Label>
               <Input
@@ -99,6 +167,7 @@ const Auth = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
+                minLength={6}
               />
             </div>
           </CardContent>

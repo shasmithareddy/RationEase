@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          created_at: string | null
+          full_name: string
+          id: string
+          phone: string
+          role: Database["public"]["Enums"]["app_role"]
+        }
+        Insert: {
+          created_at?: string | null
+          full_name: string
+          id: string
+          phone: string
+          role?: Database["public"]["Enums"]["app_role"]
+        }
+        Update: {
+          created_at?: string | null
+          full_name?: string
+          id?: string
+          phone?: string
+          role?: Database["public"]["Enums"]["app_role"]
+        }
+        Relationships: []
+      }
       shop_users: {
         Row: {
           created_at: string
@@ -48,10 +72,12 @@ export type Database = {
           created_at: string
           id: string
           is_active: boolean
+          last_reset_date: string | null
           location: string
           location_tamil: string
           name: string
           name_tamil: string
+          open_days: string[] | null
           qr_code: string
           updated_at: string
           user_id: string
@@ -60,10 +86,12 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+          last_reset_date?: string | null
           location: string
           location_tamil: string
           name: string
           name_tamil: string
+          open_days?: string[] | null
           qr_code: string
           updated_at?: string
           user_id: string
@@ -72,10 +100,12 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+          last_reset_date?: string | null
           location?: string
           location_tamil?: string
           name?: string
           name_tamil?: string
+          open_days?: string[] | null
           qr_code?: string
           updated_at?: string
           user_id?: string
@@ -131,7 +161,7 @@ export type Database = {
       get_next_token_number: { Args: { p_shop_id: string }; Returns: number }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "shop_owner" | "customer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -258,6 +288,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["shop_owner", "customer"],
+    },
   },
 } as const

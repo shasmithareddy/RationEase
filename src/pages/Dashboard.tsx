@@ -51,17 +51,30 @@ const Dashboard = () => {
 
   const loadShopData = async (userId: string) => {
     try {
-      // Get shop associated with user
-      const { data: shopUser, error: shopUserError } = await (supabase as any)
+      // First try to get shop through shop_users
+      const { data: shopUser } = await supabase
         .from("shop_users")
         .select("shop_id")
         .eq("user_id", userId)
-        .single();
+        .maybeSingle();
 
-      if (shopUserError || !shopUser) {
+      let shopId = shopUser?.shop_id;
+
+      // If no shop user, try to load the sample shop for now
+      if (!shopId) {
+        const { data: defaultShop } = await supabase
+          .from("shops")
+          .select("id")
+          .eq("qr_code", "SHOP001")
+          .single();
+        
+        shopId = defaultShop?.id;
+      }
+
+      if (!shopId) {
         toast({
           title: "பிழை / Error",
-          description: "கடை தகவல் கிடைக்கவில்லை / Shop information not found",
+          description: "கடை தகவல் கிடைக்கவில்லை / Shop not found. Please contact admin.",
           variant: "destructive",
         });
         setLoading(false);
@@ -69,17 +82,18 @@ const Dashboard = () => {
       }
 
       // Get shop details
-      const { data: shopData, error: shopError } = await (supabase as any)
+      const { data: shopData, error: shopError } = await supabase
         .from("shops")
         .select("*")
-        .eq("id", (shopUser as any).shop_id)
+        .eq("id", shopId)
         .single();
 
       if (shopError) throw shopError;
       
       setShop(shopData);
-      await loadTokens((shopUser as any).shop_id);
+      await loadTokens(shopId);
     } catch (error: any) {
+      console.error("Shop load error:", error);
       toast({
         title: "பிழை / Error",
         description: error.message,
@@ -140,7 +154,7 @@ const Dashboard = () => {
   const handleApproveToken = async (tokenId: string) => {
     try {
       // Update token status to completed
-      const { error: updateError } = await (supabase as any)
+      const { error: updateError } = await supabase
         .from("tokens")
         .update({ 
           status: "completed",
@@ -150,30 +164,47 @@ const Dashboard = () => {
 
       if (updateError) throw updateError;
 
-      // Get next 3-4 waiting tokens to notify
-      const waitingTokens = tokens
-        .filter(t => t.status === "waiting")
-        .slice(0, 4);
+      // Reload tokens to get fresh data
+      if (shop) {
+        await loadTokens(shop.id);
+      }
 
-      if (waitingTokens.length > 0 && shop) {
+      // Get next 3 waiting tokens after current one
+      const currentIndex = tokens.findIndex(t => t.id === tokenId);
+      const nextTokens = tokens
+        .filter(t => t.status === "waiting")
+        .slice(0, 3);
+
+      if (nextTokens.length > 0 && shop) {
         // Call edge function to send SMS notifications
         const { error: smsError } = await supabase.functions.invoke("send-sms-notifications", {
           body: {
-            tokens: waitingTokens,
+            tokens: nextTokens,
             shopName: shop.name,
           },
         });
 
         if (smsError) {
           console.error("SMS error:", smsError);
+          toast({
+            title: "SMS எச்சரிக்கை / SMS Warning",
+            description: "Token completed but SMS failed. Check Twilio credentials.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "வெற்றி / Success",
+            description: `டோக்கன் முடிவடைந்தது! ${nextTokens.length} பேருக்கு SMS அனுப்பப்பட்டது / Token completed! SMS sent to ${nextTokens.length} customers`,
+          });
         }
+      } else {
+        toast({
+          title: "வெற்றி / Success",
+          description: "டோக்கன் முடிவடைந்தது / Token completed",
+        });
       }
-
-      toast({
-        title: "வெற்றி / Success",
-        description: "டோக்கன் முடிவடைந்தது / Token completed",
-      });
     } catch (error: any) {
+      console.error("Approve error:", error);
       toast({
         title: "பிழை / Error",
         description: error.message,
