@@ -29,17 +29,25 @@ const Index = () => {
               className="text-lg bg-gradient-to-r from-primary to-primary-glow hover:opacity-90 transition-all"
               onClick={() => navigate("/auth")}
             >
-              உள்நுழைக / Login
+              கடை உரிமையாளர் / Shop Owner Login
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button 
               size="lg" 
               variant="outline"
-              className="text-lg"
-              onClick={() => navigate("/auth")}
+              className="text-lg border-2"
+              onClick={() => navigate("/join/SHOP001")}
             >
-              பதிவு செய்க / Sign Up
+              வாடிக்கையாளர் - டோக்கன் பெறவும் / Customer - Get Token
             </Button>
+          </div>
+
+          <div className="mt-6 p-4 bg-card rounded-lg border border-border max-w-xl mx-auto">
+            <p className="text-sm text-muted-foreground text-center">
+              🎯 <strong>Demo Shop:</strong> Tamil Nadu Ration Shop (SHOP001)
+              <br />
+              <span className="text-xs">Click "Get Token" above or scan QR code at the shop</span>
+            </p>
           </div>
         </div>
 
