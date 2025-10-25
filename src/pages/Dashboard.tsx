@@ -51,35 +51,8 @@ const Dashboard = () => {
 
   const loadShopData = async (userId: string) => {
     try {
-      // First try to get shop through shop_users
-      const { data: shopUser } = await supabase
-        .from("shop_users")
-        .select("shop_id")
-        .eq("user_id", userId)
-        .maybeSingle();
-
-      let shopId = shopUser?.shop_id;
-
-      // If no shop user, try to load the sample shop for now
-      if (!shopId) {
-        const { data: defaultShop } = await supabase
-          .from("shops")
-          .select("id")
-          .eq("qr_code", "SHOP001")
-          .single();
-        
-        shopId = defaultShop?.id;
-      }
-
-      if (!shopId) {
-        toast({
-          title: "பிழை / Error",
-          description: "கடை தகவல் கிடைக்கவில்லை / Shop not found. Please contact admin.",
-          variant: "destructive",
-        });
-        setLoading(false);
-        return;
-      }
+      // Hardcoded SHOP001 - Tamil Nadu Ration Shop
+      const shopId = "2c61f3ab-f3ac-485a-8a4c-f829401a2bee";
 
       // Get shop details
       const { data: shopData, error: shopError } = await supabase
