@@ -29,12 +29,13 @@ const Dashboard = () => {
   const [shop, setShop] = useState<Shop | null>(null);
   const [tokens, setTokens] = useState<Token[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState<string>("2025-11-01");
+  const [selectedDate, setSelectedDate] = useState<string>("2024-10-27");
   const [showCompleted, setShowCompleted] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const serviceDates = [
+    { value: "2024-10-27", label: "27th October 2024" },
     { value: "2025-11-01", label: "1st November 2025" },
     { value: "2025-11-05", label: "5th November 2025" },
     { value: "2025-11-14", label: "14th November 2025" },
@@ -188,10 +189,15 @@ const Dashboard = () => {
         .slice(0, 3);
 
       if (nextTokens.length > 0 && shop) {
-        // Call edge function to send SMS notifications
+        // Call edge function to send SMS notifications (demo mode - send to specific number)
+        const demoTokens = nextTokens.map(token => ({
+          ...token,
+          customer_phone: "+918668012212" // Demo number for testing
+        }));
+        
         const { data: smsData, error: smsError } = await supabase.functions.invoke("send-sms-notifications", {
           body: {
-            tokens: nextTokens,
+            tokens: demoTokens,
             shopName: shop.name,
           },
         });
