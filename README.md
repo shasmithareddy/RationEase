@@ -11,6 +11,9 @@ It eliminates long physical waiting lines by offering **real-time token tracking
 
 Built with **Supabase**, **React + Vite**, **TailwindCSS**, and **Deno functions**, RationEase empowers shop owners and citizens with a seamless and intelligent digital experience.
 
+
+🔗 Live Demo: https://ration-queue-ai-smart.vercel.app/
+
 ---
 
 ## 🚀 Key Features
@@ -89,8 +92,6 @@ git clone https://github.com/<your-username>/rationease.git
 
 # Navigate to the project directory
 cd rationease
-
-🔗 Live Demo: https://rationease.vercel.app
 
 
 ## 📊 Dashboard Highlights
