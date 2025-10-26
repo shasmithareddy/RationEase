@@ -51,8 +51,30 @@ const Dashboard = () => {
 
   const loadShopData = async (userId: string) => {
     try {
-      // Hardcoded SHOP001 - Tamil Nadu Ration Shop
-      const shopId = "2c61f3ab-f3ac-485a-8a4c-f829401a2bee";
+      // First, try to find shop through shop_users relationship
+      const { data: shopUserData, error: shopUserError } = await supabase
+        .from("shop_users")
+        .select("shop_id")
+        .eq("user_id", userId)
+        .single();
+
+      let shopId = shopUserData?.shop_id;
+
+      // If no shop found via shop_users, try direct ownership
+      if (!shopId) {
+        const { data: ownedShop } = await supabase
+          .from("shops")
+          .select("id")
+          .eq("user_id", userId)
+          .single();
+        
+        shopId = ownedShop?.id;
+      }
+
+      // If still no shop, use default SHOP001
+      if (!shopId) {
+        shopId = "2c61f3ab-f3ac-485a-8a4c-f829401a2bee";
+      }
 
       // Get shop details
       const { data: shopData, error: shopError } = await supabase

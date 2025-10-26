@@ -159,6 +159,14 @@ export type Database = {
     }
     Functions: {
       get_next_token_number: { Args: { p_shop_id: string }; Returns: number }
+      user_has_shop_access: {
+        Args: { _shop_id: string; _user_id: string }
+        Returns: boolean
+      }
+      user_owns_shop: {
+        Args: { _shop_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "shop_owner" | "customer"
