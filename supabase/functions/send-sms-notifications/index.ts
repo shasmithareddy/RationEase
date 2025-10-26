@@ -37,7 +37,7 @@ serve(async (req) => {
 
     // Send SMS to each customer
     const smsPromises = tokens.map(async (token) => {
-      const message = `RationQueue Alert: Token #${token.token_number} - ${token.customer_name}, your turn is approaching at ${shopName}. Please arrive within 10-15 minutes. / உங்கள் முறை நெருங்குகிறது, தயவுசெய்து 10-15 நிமிடங்களில் வாருங்கள்.`;
+      const message = `RationQueue Alert: Token #${token.token_number} - ${token.customer_name}, your turn is in 15 minutes at ${shopName}. Please arrive soon. / உங்கள் முறை 15 நிமிடங்களில், தயவுசெய்து விரைவில் வாருங்கள்.`;
 
       const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
       

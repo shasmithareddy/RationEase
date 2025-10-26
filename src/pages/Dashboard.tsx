@@ -29,13 +29,28 @@ const Dashboard = () => {
   const [shop, setShop] = useState<Shop | null>(null);
   const [tokens, setTokens] = useState<Token[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState<string>("2025-11-01");
+  const [showCompleted, setShowCompleted] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const serviceDates = [
+    { value: "2025-11-01", label: "1st November 2025" },
+    { value: "2025-11-05", label: "5th November 2025" },
+    { value: "2025-11-14", label: "14th November 2025" },
+    { value: "2025-11-17", label: "17th November 2025" },
+  ];
 
   useEffect(() => {
     checkUser();
     setupRealtimeSubscription();
   }, []);
+
+  useEffect(() => {
+    if (shop) {
+      loadTokens(shop.id);
+    }
+  }, [selectedDate, shop]);
 
   const checkUser = async () => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -104,6 +119,8 @@ const Dashboard = () => {
       .from("tokens")
       .select("*")
       .eq("shop_id", shopId)
+      .gte("created_at", `${selectedDate}T00:00:00`)
+      .lt("created_at", `${selectedDate}T23:59:59`)
       .order("token_number", { ascending: true });
 
     if (error) {
@@ -172,7 +189,7 @@ const Dashboard = () => {
 
       if (nextTokens.length > 0 && shop) {
         // Call edge function to send SMS notifications
-        const { error: smsError } = await supabase.functions.invoke("send-sms-notifications", {
+        const { data: smsData, error: smsError } = await supabase.functions.invoke("send-sms-notifications", {
           body: {
             tokens: nextTokens,
             shopName: shop.name,
@@ -183,13 +200,13 @@ const Dashboard = () => {
           console.error("SMS error:", smsError);
           toast({
             title: "SMS எச்சரிக்கை / SMS Warning",
-            description: "Token completed but SMS failed. Check Twilio credentials.",
+            description: "Token completed but SMS failed. Verify your Twilio phone numbers at twilio.com/console",
             variant: "destructive",
           });
         } else {
           toast({
             title: "வெற்றி / Success",
-            description: `டோக்கன் முடிவடைந்தது! ${nextTokens.length} பேருக்கு SMS அனுப்பப்பட்டது / Token completed! SMS sent to ${nextTokens.length} customers`,
+            description: `டோக்கன் முடிவடைந்தது! அடுத்த ${nextTokens.length} பேருக்கு SMS அனுப்பப்பட்டது (15 நிமிடங்களில் வரவும்) / Token completed! SMS sent to next ${nextTokens.length} customers (arrive in 15 min)`,
           });
         }
       } else {
@@ -245,6 +262,24 @@ const Dashboard = () => {
       </header>
 
       <div className="container mx-auto px-4 py-6 space-y-6">
+        {/* Date Filter */}
+        <div className="bg-card rounded-lg p-4 border border-border shadow-sm">
+          <label className="text-sm font-medium mb-2 block">
+            சேவை தேதி / Service Date
+          </label>
+          <select
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="w-full md:w-auto px-4 py-2 rounded-md border border-border bg-background"
+          >
+            {serviceDates.map((date) => (
+              <option key={date.value} value={date.value}>
+                {date.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Stats Overview */}
         <QueueStats
           waiting={waitingTokens.length}
@@ -255,27 +290,56 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Queue List */}
           <div className="lg:col-span-2 space-y-4">
-            <h2 className="text-xl font-semibold flex items-center gap-2">
-              <Users className="h-5 w-5 text-primary" />
-              நடப்பு வரிசை / Current Queue
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold flex items-center gap-2">
+                <Users className="h-5 w-5 text-primary" />
+                {showCompleted ? "முடிந்த டோக்கன்கள் / Completed Tokens" : "நடப்பு வரிசை / Current Queue"}
+              </h2>
+              <Button
+                onClick={() => setShowCompleted(!showCompleted)}
+                variant="outline"
+                size="sm"
+              >
+                {showCompleted ? "Show Queue" : "Show Completed"}
+              </Button>
+            </div>
             
-            {waitingTokens.length === 0 ? (
-              <div className="bg-card rounded-lg p-8 text-center border border-border">
-                <p className="text-muted-foreground">
-                  தற்போது வரிசையில் யாரும் இல்லை / No one in queue currently
-                </p>
-              </div>
+            {showCompleted ? (
+              tokens.filter(t => t.status === "completed").length === 0 ? (
+                <div className="bg-card rounded-lg p-8 text-center border border-border">
+                  <p className="text-muted-foreground">
+                    இன்று முடிந்த டோக்கன்கள் இல்லை / No completed tokens today
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {tokens.filter(t => t.status === "completed").map((token) => (
+                    <TokenCard
+                      key={token.id}
+                      token={token}
+                      onApprove={() => {}}
+                    />
+                  ))}
+                </div>
+              )
             ) : (
-              <div className="space-y-3">
-                {waitingTokens.map((token) => (
-                  <TokenCard
-                    key={token.id}
-                    token={token}
-                    onApprove={() => handleApproveToken(token.id)}
-                  />
-                ))}
-              </div>
+              waitingTokens.length === 0 ? (
+                <div className="bg-card rounded-lg p-8 text-center border border-border">
+                  <p className="text-muted-foreground">
+                    தற்போது வரிசையில் யாரும் இல்லை / No one in queue currently
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {waitingTokens.map((token) => (
+                    <TokenCard
+                      key={token.id}
+                      token={token}
+                      onApprove={() => handleApproveToken(token.id)}
+                    />
+                  ))}
+                </div>
+              )
             )}
           </div>
 
@@ -298,7 +362,7 @@ const Dashboard = () => {
                   </span>
                   <span className="font-semibold text-primary">
                     {waitingTokens.length > 0 
-                      ? `${Math.round(waitingTokens.length * 5)} mins`
+                      ? `${Math.round(waitingTokens.length * 7.5)} mins`
                       : "0 mins"
                     }
                   </span>
@@ -308,7 +372,7 @@ const Dashboard = () => {
                     சேவை வேகம் / Service Speed
                   </span>
                   <span className="font-semibold text-accent">
-                    ~5 mins/token
+                    5-10 mins/token
                   </span>
                 </div>
                 <div className="pt-3 border-t border-border">
